@@ -23,17 +23,17 @@ export default class MousePosition {
     handler.setInputAction((movement) => {
       //   获取鼠标的坐标
       const cartesian = viewer.camera.pickEllipsoid(
-        movement.endPosition,
-        viewer.scene.globe.ellipsoid
+          movement.endPosition,
+          viewer.scene.globe.ellipsoid
       );
       if (cartesian) {
         //   转换成经纬度
         const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
         const longitudeString = Cesium.Math.toDegrees(
-          cartographic.longitude
+            cartographic.longitude
         ).toFixed(2);
         const latitudeString = Cesium.Math.toDegrees(
-          cartographic.latitude
+            cartographic.latitude
         ).toFixed(2);
         const heightString = cartographic.height;
         //   显示经纬度

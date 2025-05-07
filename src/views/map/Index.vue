@@ -1,12 +1,12 @@
 <template>
-    <div id="cesiumContainer" ref="cesiumContainer">
-      <map-left></map-left>
-      <map-bottom></map-bottom>
-      <div class="topBox"></div>
+  <div id="cesiumContainer" ref="cesiumContainer">
+    <map-left></map-left>
+    <map-bottom></map-bottom>
+    <div class="topBox"></div>
 
 
-      <div class="rightBox"></div>
-    </div>
+    <div class="rightBox"></div>
+  </div>
 </template>
 
 <script setup>
@@ -14,7 +14,7 @@
 // 将cesium目录下的Build/Cesium4个目录拷贝到public，然后将widgets目录拷贝一份到src下
 import * as Cesium from "cesium";
 import "../../Widgets/widgets.css";
-import { onMounted } from "vue";
+import {onMounted} from "vue";
 import gsap from "gsap";
 import initViewer from "@/cesium/initViewer";
 import MousePosition from "@/cesium/MousePosition";
@@ -31,8 +31,10 @@ import ParticleLight from "@/cesium/ParticleLight";
 import MapBottom from "@/views/map/MapBottom.vue";
 import MapLeft from "@/views/map/MapLeft.vue";
 
+
 onMounted(() => {
   let viewer = initViewer();
+  // 等待 viewer 初始化完成再执行后续逻辑
   // 根据鼠标位置生成经纬度值
   let mousePosition = new MousePosition(viewer);
   // 设置导航罗盘的配置
@@ -64,10 +66,26 @@ onMounted(() => {
   //let lightSpread = new LightSpread(viewer);
   // 创建光墙
   let lightWall = new LightWall(viewer);
+
+
+
+  // if (abc){
+  // let waterFlood; // 先声明
+  //
+  // function initFlood(viewer) {
+  //   waterFlood = waterFlood(viewer);
+  // }
+  //
+  // // 然后在 viewer 初始化完成后再调用
+  // initFlood(viewer);
+
+
+  // waterFlood(viewer);
   // // particleLight,创建烟花粒子
   // let particleLight = new ParticleLight(viewer, Cesium.Color.RED);
   // let particleLight1 = new ParticleLight(viewer, Cesium.Color.AQUA);
   // let particleLight2 = new ParticleLight(viewer, Cesium.Color.GREEN);
+
 });
 </script>
 
@@ -76,6 +94,7 @@ onMounted(() => {
   margin: 0;
   padding: 0;
 }
+
 #cesiumContainer {
   width: 100vw;
   height: 100vh;
