@@ -30,3 +30,5 @@ http://localhost:8080/
 1. Integrate element plus+route redirection  整合element-plus + 路由跳转 
 2. Development of Map Bottom Menu Bar 地图底部菜单栏的开发
 3. Integrating LLM and backend services  and echarts 集成大模型和后端服务、echarts
+4. Large model knowledge base management page 大模型知识库管理页面
+5. Large model application management page 大模型应用管理页面

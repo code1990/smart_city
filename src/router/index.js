@@ -41,6 +41,17 @@ const routes = [
         component: () => import('../views/scene/Model.vue')
     },
     {
+        path: '/dataset',
+        name: 'dataset',
+        component: () => import('../views/Dataset.vue')
+    },
+
+    {
+        path: '/application',
+        name: 'application',
+        component: () => import('../views/Application.vue')
+    },
+    {
         path: '/:pathMatch(.*)*',
         name: 'not-found',
         component: () => import('../views/4XX.vue')

@@ -190,7 +190,12 @@
       </el-col>
     </el-row>
   </div>
-
+  <div class="bottomBox4">
+    <el-button link @click="router.push('/dataset')">知识库</el-button>
+  </div>
+  <div class="bottomBox5">
+    <el-button link @click="router.push('/application')">应用中心</el-button>
+  </div>
 </template>
 <script setup>
 import { ref } from 'vue'
@@ -505,6 +510,36 @@ const getModel = (type) => {
   font-weight: bold;
   top: 9px;
   margin-left: 120px;
+}
+
+.bottomBox4{
+  height: 40px;
+  position: absolute;
+  bottom: 10px;
+  z-index: 999;
+  font-weight: bold;
+  top: 158px;
+  margin-left: 10px;
+  background-color: white;
+  border-radius: 5px;
+  line-height: 40px ;
+  width: 80px;
+  text-align: center;
+}
+
+.bottomBox5{
+  height: 40px;
+  position: absolute;
+  bottom: 10px;
+  z-index: 999;
+  font-weight: bold;
+  top: 209px;
+  margin-left: 10px;
+  background-color: white;
+  border-radius: 5px;
+  line-height: 40px ;
+  width: 80px;
+  text-align: center;
 }
 
 .el-row {
