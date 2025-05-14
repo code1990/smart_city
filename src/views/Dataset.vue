@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
     <div class="dataBox">
       <div class="dataBox2">
         <div class="searchBox" style="width: 99%;height: 40px;padding: 10px 10px;">
@@ -56,7 +56,7 @@
               <el-card shadow="never" style="height: 160px;">
                 <div slot="header">
                   <div>
-                    <el-image style="width: 20px; height: 20px;background-color: #3370FF;border-radius: 5px;padding: 5px 5px;float: left;" :src="url" fit="fill" />
+                    <el-image style="width: 20px; height: 20px;background-color: #3370FF;border-radius: 5px;padding: 5px 5px;float: left;" :src="icon_document" fit="fill" />
                     <div style="width: 100px;float: left;margin-top: -6px;margin-left: 10px;">
                       <div style="width: 100%;font-size: 14px;">智慧水务</div>
                       <div style="width: 100%;font-size: 12px;">创建者: admin</div>
@@ -95,7 +95,7 @@
               <el-card shadow="never" style="height: 160px;">
                 <div slot="header">
                   <div>
-                    <el-image style="width: 20px; height: 20px;background-color: #3370FF;border-radius: 5px;padding: 5px 5px;float: left;" :src="url" fit="fill" />
+                    <el-image style="width: 20px; height: 20px;background-color: #3370FF;border-radius: 5px;padding: 5px 5px;float: left;" :src="icon_document" fit="fill" />
                     <div style="width: 100px;float: left;margin-top: -6px;margin-left: 10px;">
                       <div style="width: 100%;font-size: 14px;">测试知识库</div>
                       <div style="width: 100%;font-size: 12px;">创建者: admin</div>
@@ -133,14 +133,159 @@
           </el-row>
         </div>
       </div>
+
+      <el-dialog v-model="dialogVisible" title="创建知识库" width="720px" >
+        <el-form :model="ruleForm" label-width="100px" label-position="left" ref="ruleFormRef" :rules="rules">
+          <el-form-item label="知识库名称" label-position="top"   prop="name">
+            <el-input
+                v-model="ruleForm.name"
+                placeholder="请输入知识库名称"
+                maxlength="64"
+                show-word-limit
+                @blur="checkInput(1)"
+            />
+          </el-form-item>
+          <el-form-item label="知识库描述" label-position="top" required prop="description">
+            <el-input
+                v-model="ruleForm.description"
+                type="textarea"
+                placeholder="描述知识库的内容，详细的描述将帮助AI能深入理解该知识库的内容，能更准确的检索到内容，提高该知识库的命中率。"
+                maxlength="256"
+                show-word-limit
+                :rows="3"
+            />
+          </el-form-item>
+
+          <el-form-item label="向量模型" label-position="top" required prop="vectorModel">
+            <el-select v-model="ruleForm.vectorModel" placeholder="请选择向量模型">
+              <el-option label="模型A" value="modelA" />
+              <el-option label="模型B" value="modelB" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="知识库类型"  label-position="top" required>
+            <el-radio-group v-model="ruleForm.type" @change="getOption" style="width: 100%;">
+              <div class="option-row" :style="{'border':ruleForm.type === '1' ? '1px solid #3370FF' : ''}" >
+                <!-- 左侧图片 -->
+                <el-image class="option-image" style="width: 20px; height: 20px;background-color: #3370FF;border-radius: 5px;padding: 5px 5px;float: left;" :src="icon_document" fit="fill" />
+                <!-- 中间文字内容 -->
+                <div class="option-text">
+                  <b>通用型</b><br/>
+                  <p style="color:#989EA6">通过上传文件或手动录入构建知识库</p>
+                </div>
+                <!-- 右侧单选框 -->
+                <el-radio value="1" ></el-radio>
+              </div>
+              <div class="option-row" :style="{'border':ruleForm.type === '2' ? '1px solid #3370FF' : '','margin-left':'10px'}"  >
+                <!-- 左侧图片 -->
+                <el-image class="option-image" style="width: 20px; height: 20px;background-color: #7F3BF5;border-radius: 5px;padding: 5px 5px;float: left;" :src="icon_web" fit="fill" />
+                <!-- 中间文字内容 -->
+                <div class="option-text">
+                  <b>web站点</b><br/>
+                  <p style="color:#989EA6">通过网站链接构建知识库</p>
+                </div>
+                <!-- 右侧单选框 -->
+                <el-radio value="2" ></el-radio>
+              </div>
+            </el-radio-group>
+          </el-form-item>
+          <div v-if="ruleForm.type === '2'">
+            <el-form-item label="Web根地址" label-position="top" required prop="webUrl">
+              <el-input
+                  v-model="ruleForm.webUrl"
+                  placeholder="请输入 Web 根地址"
+                  show-word-limit
+              />
+            </el-form-item>
+
+            <el-form-item label="选择器" label-position="top" >
+              <el-input
+                  v-model="ruleForm.webCss"
+                  placeholder="默认为 body，可输入.classname/#idname/tagname"
+                  show-word-limit
+              />
+            </el-form-item>
+          </div>
+        </el-form>
+
+        <template #footer>
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleCreate" style="background-color: #3370FF">创建</el-button>
+        </template>
+      </el-dialog>
+
     </div>
 </template>
 <script setup>
-import { ref } from 'vue'
-import {Search, Plus, MoreFilled, Crop, Setting, Connection, Document, Delete} from '@element-plus/icons-vue'
+import { reactive, ref } from 'vue'
+import {Search, Plus, MoreFilled, Crop, Setting, Connection, Document, Delete, Monitor} from '@element-plus/icons-vue'
+import icon_document from '@/assets/icon_document.svg'
+import icon_web from '@/assets/icon_web.svg'
+
+
+const ruleFormRef = ref(null)
+const ruleForm = reactive({
+  name: '',
+  description: '',
+  vectorModel: '',
+  type: '',
+  webUrl: '',
+  webCss: ''
+})
+
+
+
+const rules = reactive({
+  name: [
+    { required: true, message: '请输入知识库名称', trigger: 'blur' },
+    { min: 1, max: 64, message: '名称长度为 1 到 64 个字符', trigger: 'blur' }
+    // { validator: validateName, trigger: 'blur' }
+  ],
+  description: [
+    { required: true, message: '请输入知识库描述', trigger: 'blur' },
+    { max: 256, message: '描述长度不能超过 256 个字符', trigger: 'blur' }
+    // { validator: validateName, trigger: 'blur' }
+
+  ],
+  vectorModel: [
+    { required: true, message: '请选择向量模型', trigger: 'change' }
+  ],
+  type: [
+    { required: true, message: '请选择知识库类型', trigger: 'change' }
+  ],
+  webUrl: [
+    {
+      required: true, // 默认 false，创建前再动态判断
+      message: '请输入 Web 根地址',
+      trigger: 'blur'
+    }
+  ]
+})
+
+
+const submitForm = async (formEl) => {
+  if (!formEl) return
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      console.log('submit!')
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
+
+const resetForm = (formEl) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
+
+
+
 const input4 = ref('')
 const value = ref('1')
-import url from '@/assets/icon_document.svg'
+const  required = ref(true)
+
+const selected = ref('1')
 
 const options = [
   {
@@ -152,6 +297,35 @@ const options = [
     label: '我的',
   },
 ]
+
+const dialogVisible = ref(false)
+
+const form = ref({
+  name: '',
+  description: '',
+  vectorModel: '',
+  knowledgeType: '通用型',
+})
+
+const handleCreate = () => {
+  console.log('提交数据:', ruleForm.value)
+  // 提交逻辑
+}
+const goToCreateKnowledge = () => {
+  dialogVisible.value = true
+}
+const getOption = () => {
+  console.error(selected.value)
+}
+const getInfo =  (type) => {
+  selected.value = type
+}
+const checkInput =  (type) => {
+  if (type === 1){
+
+  }
+}
+
 </script>
 
 <style scoped>
@@ -190,6 +364,7 @@ const options = [
   line-height: 1.5em;
   width: 100%;
   padding-top: 10px;
+  height: 45px;
 }
 
 .stat-container {
@@ -209,5 +384,51 @@ const options = [
   width: 1px;
   height: 24px;
   background-color: #dcdfe6;
+}
+
+.el-radio-button__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  line-height: 1.2;
+  font-size: 14px;
+}
+.el-radio-button__inner small {
+  font-size: 12px;
+  color: #999;
+}
+.no-margin-left {
+  margin-left: 0 !important;
+}
+::v-deep(.no-margin-left .el-form-item__content) {
+  margin-left: 0 !important;
+}
+.option-row {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  width: 46%;
+  height: 60px;
+}
+
+.option-image {
+  width: 60px;
+  height: 60px;
+  margin-right: 16px;
+  border-radius: 4px;
+}
+
+.option-text {
+  flex: 1; /* 占据中间所有空间 */
+  font-size: 14px;
+  color: #333;
+}
+
+.el-radio {
+  margin-left: 16px;
 }
 </style>

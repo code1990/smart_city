@@ -32,3 +32,5 @@ http://localhost:8080/
 3. Integrating LLM and backend services  and echarts 集成大模型和后端服务、echarts
 4. Large model knowledge base management page 大模型知识库管理页面
 5. Large model application management page 大模型应用管理页面
+6. Add LLM knowledge Page 新增知识库页面
+7. Add LLM app Page 新增应用页面

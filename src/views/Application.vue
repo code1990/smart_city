@@ -52,7 +52,7 @@
 
 <!--            </el-card>-->
             <el-card class="app-card" shadow="hover" >
-              <div class="card-section top" style="margin-bottom: 10px;">
+              <div class="card-section top" style="margin-bottom: 10px;" @click="goToApp">
                 <el-icon><DocumentAdd/></el-icon>&nbsp;&nbsp;
                 <span>创建应用</span>
               </div>
@@ -203,14 +203,90 @@
         </el-row>
       </div>
     </div>
+
+    <el-dialog v-model="dialogVisible" title="创建应用" width="720px" >
+      <el-form
+          :model="form"
+          label-width="100px"
+          label-position="left">
+        <el-form-item label="名称"  label-position="top" required>
+          <el-input
+              v-model="form.name"
+              placeholder="请输入应用名称"
+              maxlength="64"
+              show-word-limit
+          />
+        </el-form-item>
+        <el-form-item label="描述" label-position="top" required>
+          <el-input
+              v-model="form.description"
+              type="textarea"
+              placeholder="描述该应用的应用场景及用途，如：XXX小助手回答用户提出的XXX产品使用问题"
+              maxlength="256"
+              show-word-limit
+              :rows="3"
+          />
+        </el-form-item>
+        <el-form-item label="类型" label-position="top" required>
+          <el-radio-group v-model="selected" @change="getOption" style="width: 100%;">
+            <div class="option-row" :style="{'border':selected === '1' ? '1px solid #3370FF' : ''}" >
+              <el-radio value="1" style="margin-right: 0"></el-radio>
+              <!-- 中间文字内容 -->
+              <div class="option-text">
+                <b>简单配置</b><br/>
+                <p style="color:#989EA6">适合新手创建小助手</p>
+              </div>
+              <!-- 右侧单选框 -->
+            </div>
+            <div class="option-row" :style="{'border':selected === '2' ? '1px solid #3370FF' : '','margin-left':'10px'}"  >
+              <el-radio value="2" style="margin-right: 0"></el-radio>
+              <!-- 中间文字内容 -->
+              <div class="option-text">
+                <b>高级编排</b><br/>
+                <p style="color:#989EA6">适合高级用户自定义小助手的工作流</p>
+              </div>
+              <!-- 右侧单选框 -->
+            </div>
+          </el-radio-group>
+        </el-form-item>
+
+        <div v-if="selected === '2'">
+          <el-form-item label="模版" label-position="top" >
+            <div class="option-row" :style="{'border':selected2 === 1 ? '1px solid #3370FF' : ''}" @click="getData(1)">
+              <div class="option-text">
+                <p >空白应用</p>
+              </div>
+            </div>
+            <div class="option-row" :style="{'border':selected2 === 2 ? '1px solid #3370FF' : '','margin-left':'10px'}"  @click="getData(2)">
+              <div class="option-text">
+                <p >知识库问答助手</p>
+              </div>
+            </div>
+          </el-form-item>
+        </div>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleCreate" style="background-color: #3370FF">创建</el-button>
+      </template>
+    </el-dialog>
+
+
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import {Search, Plus, VideoPlay,Tools,MoreFilled,DocumentAdd, DocumentChecked} from '@element-plus/icons-vue'
+import icon_document from "@/assets/icon_document.svg";
+import icon_web from "@/assets/icon_web.svg";
+
 const input4 = ref('')
 const value = ref('1')
-import url from '@/assets/icon_document.svg'
+const  required = ref(true)
+
+const selected = ref('1')
+const selected2 = ref('')
 
 const options = [
   {
@@ -222,6 +298,23 @@ const options = [
     label: '我的',
   },
 ]
+
+const dialogVisible = ref(false)
+
+const form = ref({
+  name: '',
+  description: '',
+  vectorModel: '',
+  knowledgeType: '通用型',
+})
+
+const goToApp = () => {
+  dialogVisible.value = true
+}
+const getData = (type) => {
+    selected2.value=type
+}
+
 </script>
 
 <style scoped>
@@ -307,5 +400,51 @@ const options = [
   height: 1px;
   background-color: #ddd;
   margin: 0;
+}
+
+.el-radio-button__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  line-height: 1.2;
+  font-size: 14px;
+}
+.el-radio-button__inner small {
+  font-size: 12px;
+  color: #999;
+}
+.no-margin-left {
+  margin-left: 0 !important;
+}
+::v-deep(.no-margin-left .el-form-item__content) {
+  margin-left: 0 !important;
+}
+.option-row {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  width: 46%;
+  height: 60px;
+}
+
+.option-image {
+  width: 60px;
+  height: 60px;
+  margin-right: 16px;
+  border-radius: 4px;
+}
+
+.option-text {
+  flex: 1; /* 占据中间所有空间 */
+  font-size: 14px;
+  color: #333;
+}
+
+.el-radio {
+  margin-left: 16px;
 }
 </style>
